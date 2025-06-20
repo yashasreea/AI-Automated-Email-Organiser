@@ -1,0 +1,786 @@
+{
+  "name": "Email Classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -40
+      ],
+      "id": "c60a7c7b-f247-4954-af18-3922f7cdf285",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Priority",
+              "description": "Emails with deadlines, pending tasks, approvals, or requiring a direct reply."
+            },
+            {
+              "category": "Casual",
+              "description": "Messages from friends/family or personal interests. Casual, emotional, or family topics."
+            },
+            {
+              "category": "Work",
+              "description": "Emails related to your job, office, projects, tasks, professional communication"
+            },
+            {
+              "category": "Spam",
+              "description": "Unsolicited or irrelevant content, scams, or phishing-like emails."
+            },
+            {
+              "category": "Promotions",
+              "description": "Marketing emails, product offers, coupons, sales, or newsletters."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -100,
+        -40
+      ],
+      "id": "f79068c8-0678-4d0f-b3e1-68af67171492",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        180
+      ],
+      "id": "01d5f5cc-874c-4ef9-a389-05b45f43e58b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ntYt9BqkwnaxPaVg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an executive assistant. Your job is to respond to incoming high-priority inquiries as accurately as possible and add from Yashasree Appikonda in the body\n\nHere is the email you are responding to : {{ $('Gmail Trigger').item.json.text }} \n\nPlease output the following parameters: \nSubject\nMessage \n",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        580,
+        -440
+      ],
+      "id": "d01c5a03-056f-496c-87a6-29bbe7e30f3e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "2hmm4XsZ6Zrg3SqR",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an executive assistant. Your job is to respond to incoming casual inquiries as accurately as possible.\n\nHere is the email you are responding to : {{ $('Gmail Trigger').item.json.text }} \n\nPlease output the following parameters: \nSubject\nMessage",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        -240
+      ],
+      "id": "8cee4965-7d04-46c6-936d-56f92928cfba",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ntYt9BqkwnaxPaVg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an executive assistant. Your job is to respond to incoming Work related inquiries as accurately as possible.\n\nHere is the email you are responding to : {{ $('Gmail Trigger').item.json.text }} \n\nPlease output the following parameters: \nSubject\nMessage",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        800,
+        -40
+      ],
+      "id": "1d7dcc87-dc1e-4b15-b549-23f13f7e7944",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ntYt9BqkwnaxPaVg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "IMPORTANT"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        360,
+        -440
+      ],
+      "id": "f95ec224-122b-4324-bd8f-4e2cfe7b5d0e",
+      "name": "Priority Gmail",
+      "webhookId": "6e5cf23d-0b74-4892-b5ca-354785d9def4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "CATEGORY_PERSONAL"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        -240
+      ],
+      "id": "f9140e68-d19b-4a18-9860-ebec170c2c07",
+      "name": "Casual Gmail",
+      "webhookId": "85023f75-5a14-48ed-820c-80d9ff1f71f3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "STARRED"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        -40
+      ],
+      "id": "02330078-a599-41e8-bf12-ce78f770a9dd",
+      "name": "Work Gmail",
+      "webhookId": "e42aa9b7-9ff1-42fc-9a79-fcbdd72c0229",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "SPAM"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        160
+      ],
+      "id": "5f53ea61-5723-4cbf-96ad-871861876972",
+      "name": "Spam Gmail",
+      "webhookId": "1dd41745-4422-4100-b0f7-611de469948f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "CATEGORY_PROMOTIONS"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        300
+      ],
+      "id": "3395d3ff-6db8-4f89-92eb-a8be4435eb36",
+      "name": "Promotions Gmail",
+      "webhookId": "980357ba-beec-4b66-bd5b-b11f7580b7c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }} ",
+        "options": {
+          "sendTo": "={{ $('Gmail Trigger').item.json.headers.from }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        -440
+      ],
+      "id": "9a17d0c5-5ec6-4e0c-b055-14b10bb483df",
+      "name": "Draft",
+      "webhookId": "6c2e0ed3-403b-448f-b810-a6ca71982c92",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7662848726",
+        "text": "=High Priority Email from {{ $('Gmail Trigger').item.json.from.value[0].name }}\n\nWe have created a draft with the subject: {{ $('OpenAI').item.json.message.content.Subject }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -440
+      ],
+      "id": "a73c5c93-8f87-4931-a6eb-d1f54612095a",
+      "name": "Telegram",
+      "webhookId": "c2d11122-08e8-4e0b-82f9-55243c2dadad",
+      "credentials": {
+        "telegramApi": {
+          "id": "xC9Vvwc0PoxVkeiE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Create a summary message for this email recieved: {{ $('Gmail Trigger').item.json.text }}\n\nOutput:\nSummary message\nSubject",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        360
+      ],
+      "id": "0a810724-4c31-4549-98e5-c6ba951ffcb6",
+      "name": "Summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "2hmm4XsZ6Zrg3SqR",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7662848726",
+        "text": "=Email from :{{ $('Gmail Trigger').item.json.from.value[0].name }}\nSummary of the mail:{{ $json.message.content.summary_message.body }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        360
+      ],
+      "id": "76f679b9-f9c8-407e-9cda-2e662fc94641",
+      "name": "Summary1",
+      "webhookId": "c2d11122-08e8-4e0b-82f9-55243c2dadad",
+      "credentials": {
+        "telegramApi": {
+          "id": "xC9Vvwc0PoxVkeiE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }} ",
+        "options": {
+          "sendTo": "={{ $('Gmail Trigger').item.json.headers.from }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        -40
+      ],
+      "id": "c1ac1700-5fdd-4410-b741-a43def5ac79f",
+      "name": "Work Draft",
+      "webhookId": "6c2e0ed3-403b-448f-b810-a6ca71982c92",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Message }} ",
+        "options": {
+          "sendTo": "={{ $('Gmail Trigger').item.json.headers.from }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        -240
+      ],
+      "id": "e9345844-365f-469a-bc62-57b2464d3b8b",
+      "name": "Reply Draft",
+      "webhookId": "6c2e0ed3-403b-448f-b810-a6ca71982c92",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CWHze5BNLgUyMsuj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7662848726",
+        "text": "=High Priority Email from {{ $('Gmail Trigger').item.json.from.value[0].name }}\n\nWe have created a draft with the subject: {{ $('OpenAI').item.json.message.content.Subject }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1460,
+        -40
+      ],
+      "id": "c280608b-4c3b-4422-80f8-1bfc9c257574",
+      "name": "Confirmation",
+      "webhookId": "c2d11122-08e8-4e0b-82f9-55243c2dadad",
+      "credentials": {
+        "telegramApi": {
+          "id": "xC9Vvwc0PoxVkeiE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7662848726",
+        "text": "=Email from:\n\n{{ $('Gmail Trigger').item.json.from.value[0].name }}\n\nWe have created a draft :\n{{ $('OpenAI1').item.json.message.content.Message }}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1220,
+        -240
+      ],
+      "id": "03be8e67-a311-490c-803f-fcfd6e190c4a",
+      "name": "Confirmation2",
+      "webhookId": "c2d11122-08e8-4e0b-82f9-55243c2dadad",
+      "credentials": {
+        "telegramApi": {
+          "id": "xC9Vvwc0PoxVkeiE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Analyse the mail :  {{ $('Gmail Trigger').item.json.text }}\nIf the mail is likely spam give an output message stating that the mail is spam, check once so that i can delete the mail.\noutput:\nmessage"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        800,
+        160
+      ],
+      "id": "6bae4464-188c-4fb3-b4aa-ada2a5dc3c51",
+      "name": "OpenAI3",
+      "credentials": {
+        "openAiApi": {
+          "id": "2hmm4XsZ6Zrg3SqR",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7662848726",
+        "text": "=Spam Email from {{ $('Gmail Trigger').item.json.from.value[0].name }}\n\nShall the mail be deleted?\n\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1180,
+        160
+      ],
+      "id": "d5f614e9-67c4-4cc4-b812-d96a2cc19d6d",
+      "name": "Confirmation1",
+      "webhookId": "c2d11122-08e8-4e0b-82f9-55243c2dadad",
+      "credentials": {
+        "telegramApi": {
+          "id": "xC9Vvwc0PoxVkeiE",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Priority Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Casual Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Work Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Spam Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Promotions Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Priority Gmail": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casual Gmail": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Work Gmail": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spam Gmail": {
+      "main": [
+        [
+          {
+            "node": "OpenAI3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Promotions Gmail": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Reply Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Summary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Work Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Work Draft": {
+      "main": [
+        [
+          {
+            "node": "Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Draft": {
+      "main": [
+        [
+          {
+            "node": "Confirmation2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI3": {
+      "main": [
+        [
+          {
+            "node": "Confirmation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ccb96759-a51d-40f7-a067-151fe6f9cb21",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9a574100321a2929870539601030047ecba7f2d7f4d97f4e60b098d1ecb218dd"
+  },
+  "id": "Z8qm2BoW5a03H3gC",
+  "tags": []
+}
